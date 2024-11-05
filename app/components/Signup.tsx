@@ -1,11 +1,13 @@
+import { signupInput } from "@/schemas/userSchema";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react"
 
 
 
+
 export const Signup = () => {
-    const [postInputs, setPostInputs] = useState({
+    const [postInputs, setPostInputs] = useState<signupInput>({
         email: "",
         firstName: "",
         lastName: "",
@@ -16,7 +18,7 @@ export const Signup = () => {
 
     async function sendRequest(){
         try{
-            const response = await axios.post("http://localhost:3000/api/user/signup", {
+            const response = await axios.post("/api/user/signup", {
                 postInputs
             })
             router.push("/home")
