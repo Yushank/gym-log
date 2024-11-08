@@ -40,16 +40,10 @@ export async function POST(req: NextRequest){
             }
         })
 
-        const token = jwt.sign({id:user.id}, process.env.JWT_SECRET as string)
-
-        const response =  NextResponse.json({
-            userId: user.id,
+        return NextResponse.json({
             message: "Signup successfull",
+            username: user.email
         })
-
-        response.cookies.set("token", token);
-
-        return response;
     }
     catch(error){
         return NextResponse.json({

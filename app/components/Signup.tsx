@@ -21,7 +21,7 @@ export const Signup = () => {
             const response = await axios.post("/api/user/signup", {
                 postInputs
             })
-            router.push("/home")
+            router.push("/api/auth/signin")
         }
         catch(error){
             alert('Error while signing up');
@@ -52,7 +52,7 @@ export const Signup = () => {
                         lastName: e.target.value
                     })
                 }}></LabelledInput>
-                <LabelledInput label="Password" placeholder="Password" onChange={(e)=>{
+                <LabelledInput label="Password" type="password" placeholder="Password" onChange={(e)=>{
                     setPostInputs({
                         ...postInputs,
                         password: e.target.value

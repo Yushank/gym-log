@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 
 
-export function authMiddleware(req: NextRequest){
+export async function authMiddleware(req: NextRequest){
     try{
-        const token = req.cookies.get("token")?.value;
+        const session = await getServerSession({req, ...authOptions})
 
-        if(!token){
+        if(!session){
             return NextResponse.redirect(new URL('/signin', req.url));
         }
-
-        const decode = jwt.verify(token, process.env.JWT_SECRET as string)as JwtPayload
-
-        req.headers.set('userId', decode.id)
 
         return NextResponse.next();
     }
