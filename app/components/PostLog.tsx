@@ -1,5 +1,8 @@
 "use client"
 
+import axios from "axios";
+import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react"
 
 
@@ -19,11 +22,14 @@ interface SessionData {
 }
 
 
-export const CreateSessionForm = () => {
+export const CreateSessionForm = async () => {
+    const router = useRouter();
     const [sessionTitle, setSessionTitle] = useState("");
     const [exercise, setExercise] = useState<ExerciseData[]>([
         { name: " ", sets: [{ weight: 0, reps: 0 }] }
     ]);
+    // const session = await getSession();
+    // const userId = session?.user.id;
 
     const addExercise = () => {
         setExercise([...exercise, { name: " ", sets: [{ weight: 0, reps: 0 }] }])
@@ -47,13 +53,30 @@ export const CreateSessionForm = () => {
         setExercise(updatedExercise)
     }
 
+    const submitHandler = async () => {
+        const session = await getSession();
+        const userId = session?.user.id;
+        try {
+            const response = await axios.post('api/log', {
+                sessionTitle,
+                exercise,
+                userId
+            });
+            router.push('/logs')
+        }
+        catch (error) {
+            alert('Error while creating session');
+            console.log(error);
+        }
+    }
+
 
     return (
         <div className="rounded-lg bg-gray-100 mx-2-xl mx-auto p-6">
             <h2 className="text-2xl font-bold mb-6 text-center">Log Input Form</h2>
             <form className="space-y-4">
                 <div>
-                    <input
+                    <input className="w-full px-3 py-2 border rounded-md focus:outline-blue-500"
                         type="text"
                         placeholder="Session Title"
                         value={sessionTitle}
@@ -62,8 +85,8 @@ export const CreateSessionForm = () => {
                 </div>
                 <div>
                     {exercise.map((exercise, exerciseIndex) => (
-                        <div key={exerciseIndex}>
-                            <input
+                        <div key={exerciseIndex} className="bg-white p-4 border rounded-md shadow-sm">
+                            <input className="w-full px-3 py-2 border rounded-md focus:outline-blue-500"
                                 placeholder="Exercise Name"
                                 value={exercise.name}
                                 onChange={(e) => updateExercise(exerciseIndex, 'name', e.target.value)}
@@ -71,14 +94,14 @@ export const CreateSessionForm = () => {
 
 
                             {exercise.sets.map((set, setIndex) => (
-                                <div key={setIndex}>
-                                    <input
+                                <div key={setIndex} className="flex space-x-2 mb-2">
+                                    <input className="w-1/2 px-2 py-1 border rounded-md"
                                         type="number"
                                         placeholder="Weight"
                                         value={set.weight}
                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
                                     ></input>
-                                    <input
+                                    <input className="w-1/2 px-2 py-1 border rounded-md"
                                         type="number"
                                         placeholder="Reps"
                                         value={set.reps}
@@ -92,115 +115,27 @@ export const CreateSessionForm = () => {
 
                     ))}
 
-                    <div className="bg-slate-500">
+                    <div className="flex justify-between space-x-5">
                         <button
+                            className="w-full bg-green-500 py-2 m-2 rounded-md"
                             type="button"
                             onClick={addExercise}
-                        ></button>
+                        >add exercise</button>
                         <button
+                            className="w-full bg-blue-500 py-2 m-2 rounded-md"
                             type="button"
                             onClick={() => addSet(exercise.length - 1)}
-                        ></button>
+                        >add set</button>
+                    </div>
+                    <div>
+                        <button
+                            className="w-full bg-red-500 py-2 m-2 rounded-md"
+                            type="button"
+                            onClick={submitHandler}
+                        >Submit</button>
                     </div>
                 </div>
             </form>
         </div>
     )
 }
-
-
-
-
-// export const LogInputForm = () => {
-//     const [title, setTitle] = useState<string>("");
-//     const [exercises, setExercises] = useState<Exercise[]>([]);
-//     const [currentExercise, setCurrentExercise] = useState<string>("");
-//     const [currentSet, setCurrentSet] = useState<Set[]>([{ weight: 0, reps: 0 }])
-//     const [set, setSet] = useState<Set[]>([{ weight: 0, reps: 0 }])
-
-//     const addSet = () => {
-//         setCurrentSet([...currentSet, { weight: 0, reps: 0 }])
-//     }
-
-//     const handleSetInput = (index: number, field: "weight" | "reps", value: string) => {
-//         const updatedSet = [...currentSet];
-//         updatedSet[index] = { ...updatedSet[index], [field]: value } //we did this to not completely change the value but only update the field value
-//         //lets say if we want to change the [1] weight value, this will only change that value and not make it completely just weight in [1]
-//         setCurrentSet(updatedSet);
-//     }
-
-//     const addExercise = () => {
-//         const newExercise: Exercise = { name: currentExercise, set: currentSet };
-//         setExercises([...exercises, newExercise]);
-//         setCurrentExercise("");
-//         setCurrentSet([{ weight: 0, reps: 0 }])
-//     }
-
-//     return <div>
-//         <h2>Log Input Form</h2>
-//         <form>
-//             <div>
-//                 <input type="text" onChange={(e) => setTitle(e.target.value)} placeholder="Session Title"></input>
-//             </div>
-
-//             <div>
-//                 <div>
-//                     <input type="text"
-//                         onChange={(e) => setCurrentExercise(e.target.value)}
-//                         placeholder="Exercise Name"></input>
-//                 </div>
-
-//                 {currentSet.map((setObj, index) => (
-//                     <div key={index}>
-//                         <input
-//                             type="number"
-//                             placeholder="weight"
-//                             value={setObj.weight}
-//                             onChange={(e) => handleSetInput(index, "weight", e.target.value)}
-//                         ></input>
-//                         <input
-//                             type="number"
-//                             placeholder="reps"
-//                             value={setObj.reps}
-//                             onChange={(e) => handleSetInput(index, "reps", e.target.value)}
-//                         ></input>
-//                     </div>
-//                 ))}
-//             </div>
-
-
-//             <button type="button" onClick={addSet}>Add Set</button>
-
-//             <button type="button" onClick={addExercise}>Add Exercise</button>
-//         </form>
-//     </div>
-
-// }
-
-// const [exercise, setExercise] = useState([" "]);
-
-// const addInputBox = () =>{
-//     setExercise([...exercise, ""]);
-// }
-
-// const handleInputChange = (index : number, value: string) =>{
-//     const newInput = [...exercise];
-//     newInput[index] = value;
-//     setExercise(newInput)
-// }
-
-// return <div>
-//     <h2>Log Input Form</h2>
-//     <form>
-//         {exercise.map((input, index) =>(
-//             <div key={index}>
-//                 <input
-//                 type="text"
-//                 placeholder={`Input ${index + 1}`}
-//                 value={input}
-//                 onChange={(e)=> handleInputChange(index, e.target.value)}></input>
-//             </div>
-//         ))}
-//         <button type="button" onClick={addInputBox}>Add exercise input box</button>
-//     </form>
-// </div>
