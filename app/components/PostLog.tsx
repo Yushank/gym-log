@@ -22,17 +22,15 @@ interface SessionData {
 }
 
 
-export const CreateSessionForm = async () => {
+export const CreateSessionForm = () => {
     const router = useRouter();
     const [sessionTitle, setSessionTitle] = useState("");
     const [exercise, setExercise] = useState<ExerciseData[]>([
         { name: " ", sets: [{ weight: 0, reps: 0 }] }
     ]);
-    // const session = await getSession();
-    // const userId = session?.user.id;
 
     const addExercise = () => {
-        setExercise([...exercise, { name: " ", sets: [{ weight: 0, reps: 0 }] }])
+        setExercise([...exercise, { name: "", sets: [{ weight: 0, reps: 0 }] }])
     }
 
     const addSet = (exerciseIndex: number) => {
@@ -56,13 +54,26 @@ export const CreateSessionForm = async () => {
     const submitHandler = async () => {
         const session = await getSession();
         const userId = session?.user.id;
+
+        if (!userId) {
+            alert("User ID not found. Please log in.");
+            return;
+        }
         try {
-            const response = await axios.post('api/log', {
-                sessionTitle,
-                exercise,
-                userId
+            const response = await axios.post('/api/log', {
+                title: sessionTitle,
+                exercise: exercise.map((ex) => ({
+                    name: ex.name,
+                    sets: ex.sets.map((set) => ({
+                        weight: set.weight,
+                        reps: set.reps,
+                    })),
+                })),
+                userId: parseInt(userId, 10)
             });
-            router.push('/logs')
+            console.log(response)
+
+            router.push('/logs');
         }
         catch (error) {
             alert('Error while creating session');
