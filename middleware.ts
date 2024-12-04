@@ -13,7 +13,7 @@ export async function middleware(req: NextRequest){
     const protectedRoutes = [
         '/logs',
         '/addLog',
-        '/api/log'
+        '/api/log',
     ]
 
     const isProtectedRoute = protectedRoutes.some(route =>
@@ -31,7 +31,8 @@ export const config = {
     matcher:[
         '/logs/:path',
         '/addLog/:path',
-        '/api/log'
+        '/api/log/:path',
+        '/log/:id'
     ]
 }
 
