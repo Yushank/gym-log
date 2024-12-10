@@ -10,21 +10,29 @@ export const Appbar = () => {
     const { data: session } = useSession();
     const router = useRouter();
 
-    async function SignupNavigation(){
+    async function SignupNavigation() {
         router.push("/signup")
     }
 
 
-    return <div>
-        <div className="flex justify-end space-x-5 bg-slate-300">
-            {!session ? (
-                <>
-                    <Button onclick={()=> signIn()} label="Signin" color="blue" />
-                    <Button onclick={SignupNavigation} label="Register" color="gray"/>
-                </>
-            ) : (
-                <Button onclick={()=> signOut()} label="Signout" color="red" />
-            )}
+    return <div >
+        <div className="flex justify-between bg-black h-10 items-center">
+            <div>
+                <h1 className="text-2xl font-bold text-white ml-2">GYM LOG</h1>
+            </div>
+            <div className="flex space-x-5">
+                {!session ? (
+                    <>
+                        <Button onclick={() => signIn()} label="Signin" color="blue" />
+                        <Button onclick={SignupNavigation} label="Register" color="gray" />
+                    </>
+                ) : (
+                    <>
+                        <Button onclick={() => signOut()} label="Signout" color="red" />
+                        <Button onclick={() => router.push('/addLog')} label="Create Session" color="blue" />
+                    </>
+                )}
+            </div>
         </div>
     </div>
 }
@@ -37,7 +45,7 @@ interface ButtonProps {
 }
 
 function Button({ label, color, onclick }: ButtonProps) {
-    const baseClasses = "rounded-lg text-white px-2"
+    const baseClasses = "rounded-lg text-white px-2 h-8 w-35"
 
     const colorClasses = {
         blue: "bg-blue-500",
@@ -48,6 +56,6 @@ function Button({ label, color, onclick }: ButtonProps) {
     const colorClass = colorClasses[color] || "bg-gray-500"
 
     return <div>
-        <button onClick = {onclick} className={`${baseClasses} ${colorClass}`}>{label}</button>
+        <button onClick={onclick} className={`${baseClasses} ${colorClass}`}>{label}</button>
     </div>
 }
