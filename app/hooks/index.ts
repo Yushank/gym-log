@@ -22,7 +22,7 @@ interface Session {
     title: string,
     userId: string,
     createdAt: string,
-    exercises: Exercise[]
+    exercise: Exercise[]
 }
 
 
