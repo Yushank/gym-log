@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id ? parseInt(session.user.id) : undefined;
 
@@ -15,7 +15,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     try {
-        const id = parseInt(params.id, 10);
+        const url = new URL(req.url);
+        const id = parseInt(url.pathname.split('/').pop() || '', 10);
 
         const log = await client.session.findFirst({
             where: {
