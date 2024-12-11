@@ -7,9 +7,13 @@ import { useLogs } from "../hooks"
 
 
 export default function Logs() {
-    const { sessions } = useLogs();
+    const { sessions, isLoading } = useLogs();
     const router = useRouter();
 
+    if(isLoading){
+        return <div>Loading...</div>
+    }
+    
     return (
         <div className="relative mix-h-screen p-4">
             <div className="grid gap-4">

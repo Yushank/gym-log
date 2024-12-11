@@ -1,6 +1,7 @@
 "use client"
 
 import { signIn, signOut, useSession } from "next-auth/react"
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -18,7 +19,9 @@ export const Appbar = () => {
     return <div >
         <div className="flex justify-between bg-black h-10 items-center">
             <div>
-                <h1 className="text-2xl font-bold text-white ml-2">GYM LOG</h1>
+                <Link href={'/logs'}>
+                    <h1 className="text-2xl font-bold text-white ml-2">GYM LOG</h1>
+                </Link>
             </div>
             <div className="flex space-x-5">
                 {!session ? (

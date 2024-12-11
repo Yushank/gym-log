@@ -91,12 +91,6 @@ export async function DELETE(req: NextRequest){
 
         console.log("Attempting to delete log with id: ", log.id);
 
-        // await client.session.delete({
-        //     where:{
-        //         id: log.id
-        //     }
-        // })
-
         await client.$transaction([
             client.sets.deleteMany({
                 where: {

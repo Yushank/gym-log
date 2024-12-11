@@ -28,17 +28,21 @@ interface Session {
 
 export const useLogs = () => {
     const [sessions, setSessions] = useState<Session[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        setIsLoading(true);
+
         axios.get('api/log')
             .then(response => {
                 setSessions(response.data)
+                setIsLoading(false)
             })
     }, [])
 
 
 
-    return { sessions }
+    return { sessions, isLoading }
 }
 
 
